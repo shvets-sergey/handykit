@@ -3,7 +3,7 @@
 var converter = new Showdown.converter();
 
 var Comment = Handykit.View({
-    renderLG: function() {
+    render: function() {
         var rawMarkup = converter.makeHtml(this.props.children.toString());
         return (
             <div className="comment">
