@@ -16,9 +16,17 @@
     // TODO think more about singletons presenters. Removing this limitation leads to some memory consum
 
     // set of libraries dependencies that used in the library
-    var Backbone = root.Backbone;
-    var React = root.React;
-    var _ = root._;
+    var Backbone, React, _;
+
+    if (typeof require !== 'undefined') {
+        Backbone = require('backbone');
+        React = require('react');
+        _ = require('underscore');
+    } else {
+        Backbone = root.Backbone;
+        React = root.React;
+        _ = root._;
+    }
     // put here all the other libraries that we depend on.
 
     var Model = Handykit.Model = Backbone.Model.extend({
