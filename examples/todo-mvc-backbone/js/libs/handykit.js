@@ -3,31 +3,30 @@
  * that adds MVP pattern to this two great libraries.
  * Author: bearz (Sergey Shvets)
  */
-(function() {
-
+(function(root, factory) {
+    // pattern from here: https://github.com/umdjs/umd/blob/master/returnExports.js
+    if (typeof define === 'function' && define.amd) {
+        // require.js and other AMD frameworks
+        define(['backbone', 'underscore', 'react'], factory);
+    } else if (typeof exports === 'object') {
+        // node.js
+        module.exports = factory(require('backbone', 'underscore', 'react'));
+    } else {
+        // browser globals
+        root.Handykit = factory(root.Backbone, root._, root.React);
+    }
+}(this, function(backbone, underscore, react) {
     // save the reference to the global object for future use
-    var root = this; // exports for node.js, 'window' for browser
-
-    var Handykit = root.Handykit = {}; // create root variable for library and export it to the 'window' namespace.
+    var Handykit = {}; // create root variable for library and export it to the 'window' namespace.
     Handykit.VERSION = 'alpha';
-    // TODO put noConflict mode
-    // TODO add r.js and other AMD compliance
+
+    // TODO put noConflict mode (does this really needed?)
     // TODO phonegap binding for mobile development + smart agentDetect for appropriate devices
     // TODO think more about singletons presenters. Removing this limitation leads to some memory consum
 
-    // set of libraries dependencies that used in the library
-    var Backbone, React, _;
-
-    if (typeof require !== 'undefined') {
-        Backbone = require('backbone');
-        React = require('react');
-        _ = require('underscore');
-    } else {
-        Backbone = root.Backbone;
-        React = root.React;
-        _ = root._;
-    }
-    // put here all the other libraries that we depend on.
+    var Backbone = backbone;
+    var React = react;
+    var _ = underscore;
 
     var Model = Handykit.Model = Backbone.Model.extend({
         /**
@@ -436,4 +435,6 @@
             timer = setTimeout(resizeHandler, 100);
         });
     };
-}).call(this);
+
+    return Handykit;
+}));
