@@ -7,6 +7,8 @@ Wrapper around Backbone and React libraries that adds MVP pattern to this cockta
 
 If you have any questions, suggestions and especially critics - feel free to contact me or create an issue.
 
+Supports AMD approach. See examples/todo-mvc-backbone-amd
+
 Philosophy
 ==========
 
