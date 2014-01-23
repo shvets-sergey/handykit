@@ -26389,8 +26389,8 @@ module.exports = traverseAllChildren;
          * inject it to the view into 'presenter' property.
          */
         componentWillMount: function() {
-            if (this.props.presenterName) {
-                this.presenter = _Core._getPresenter(this.props.presenterName);
+            if (this.props.presenter) {
+                this.presenter = this.props.presenter;
             }
             this._componentWillMountNative && this._componentWillMountNative();
         },
@@ -26447,42 +26447,6 @@ module.exports = traverseAllChildren;
         this._eventBus.on("__forceDOMUpdate", function(props) {
             this.updateUI(props);
         }, this);
-
-        /**
-         * Returns presenter from registered in Core. Makes sure that we don't
-         * have multiple instances of one presenter. This can change in future if use cases for multiple
-         * presenters will be provided.
-         * TODO think about getting name from prototype.
-         * @param name
-         *      name of presenter from 'name' attribute.
-         * @returns {*}
-         * @private
-         */
-        this._getPresenter = function(name) {
-            if (_.has(this._presenters, name)) {
-                return this._presenters[name];
-            } else {
-                throw "No presenter with name '" + name + "' registered";
-            }
-        };
-
-        /**
-         * Registers presenter inside the Core component. It keeps only one instance of
-         * presenter, since we assume that presenters will be singletons. It can change in future.
-         * @param presenter
-         *      Presenter object for creation.
-         * @returns {Presenter}
-         * @private
-         */
-        this._registerPresenter = function(presenter) {
-            var name = presenter.name;
-            if (!name) {
-                throw "Presenter must have 'name' argument!";
-            }
-
-            this._presenters[name] = presenter;
-            return presenter;
-        };
 
         /**
          * Core function that trigger root component update. We rely on "reactiveness" of react, so just trigger
@@ -26558,13 +26522,6 @@ module.exports = traverseAllChildren;
             }
         }
 
-        // handle register of presenter
-        if (_Core) {
-            _Core._registerPresenter(this);
-        } else {
-            _tmp_presenters.push(this);
-        }
-
         // bind presenters events
         if (this.events) {
             for (var eventName in this.events) {
@@ -26584,11 +26541,6 @@ module.exports = traverseAllChildren;
      */
     Handykit.start = function(rootComponent, rootElement ) {
         _Core = new Core(rootComponent, rootElement);
-
-        for (var i=0; i < _tmp_presenters.length; i++) {
-            _Core._registerPresenter(_tmp_presenters[i]);
-        }
-        _tmp_presenters = []; // handy way to clean array
         _Core.updateUI();
     };
 
@@ -26898,7 +26850,6 @@ define('collections/todos',['handykit', 'models/todo', 'backbone-localStorage'],
 /* GLOBAL Handykit, jQuery */
 define('presenters/todo-presenter',['handykit', 'collections/todos'], function(Handykit, todoCollection) {
     var TodoPresenter = Handykit.Presenter.extend({
-        name: 'TodoPresenter',
         selectedFilter: 'all',
         initialize: function() {
             _.bindAll(this, 'createTodo', 'clearCompleted', 'bulkMarkAll', 'toggleTodo',
@@ -26967,7 +26918,7 @@ define('presenters/todo-presenter',['handykit', 'collections/todos'], function(H
 /** @jsx React.DOM */
 // it is important to define react over here even if you don't use
 // it since JSX transformer will transform your jsx to React.DOM views.
-define('views/reactive-views',['react', 'handykit'], function(React, Handykit) {
+define('views/reactive-views',['react', 'handykit', 'presenters/todo-presenter'], function(React, Handykit, todoPresenter) {
     var ENTER_KEY = 13;
     var ESC_KEY = 27;
 
@@ -26975,7 +26926,7 @@ define('views/reactive-views',['react', 'handykit'], function(React, Handykit) {
         render: function() {
             return (
                 React.DOM.div(null, 
-                    TodoApp( {presenterName:"TodoPresenter"} ),
+                    TodoApp( {presenter:todoPresenter} ),
                     React.DOM.footer( {className:"info"}, 
                         React.DOM.p(null, "Double-click to edit a todo"),
                         React.DOM.p(null, "Originally written by ", React.DOM.a( {href:"https://github.com/addyosmani"}, "Addy Osmani")),

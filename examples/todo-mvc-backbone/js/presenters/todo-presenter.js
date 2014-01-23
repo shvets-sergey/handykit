@@ -4,7 +4,6 @@ var app = app || {};
 (function($) {
 
     var TodoPresenter = Handykit.Presenter.extend({
-        name: 'TodoPresenter',
         selectedFilter: 'all',
         initialize: function() {
             _.bindAll(this, 'createTodo', 'clearCompleted', 'bulkMarkAll', 'toggleTodo',
