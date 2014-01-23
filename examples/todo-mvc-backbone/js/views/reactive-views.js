@@ -7,7 +7,7 @@ var app = app || {};
         render: function() {
             return (
                 <div>
-                    <TodoApp presenterName='TodoPresenter' />
+                    <TodoApp presenter={app.TodoPresenter} />
                     <footer className="info">
                         <p>Double-click to edit a todo</p>
                         <p>Originally written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>

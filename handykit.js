@@ -216,8 +216,8 @@
          * inject it to the view into 'presenter' property.
          */
         componentWillMount: function() {
-            if (this.props.presenterName) {
-                this.presenter = _Core._getPresenter(this.props.presenterName);
+            if (this.props.presenter) {
+                this.presenter = this.props.presenter;
             }
             this._componentWillMountNative && this._componentWillMountNative();
         },
@@ -274,42 +274,6 @@
         this._eventBus.on("__forceDOMUpdate", function(props) {
             this.updateUI(props);
         }, this);
-
-        /**
-         * Returns presenter from registered in Core. Makes sure that we don't
-         * have multiple instances of one presenter. This can change in future if use cases for multiple
-         * presenters will be provided.
-         * TODO think about getting name from prototype.
-         * @param name
-         *      name of presenter from 'name' attribute.
-         * @returns {*}
-         * @private
-         */
-        this._getPresenter = function(name) {
-            if (_.has(this._presenters, name)) {
-                return this._presenters[name];
-            } else {
-                throw "No presenter with name '" + name + "' registered";
-            }
-        };
-
-        /**
-         * Registers presenter inside the Core component. It keeps only one instance of
-         * presenter, since we assume that presenters will be singletons. It can change in future.
-         * @param presenter
-         *      Presenter object for creation.
-         * @returns {Presenter}
-         * @private
-         */
-        this._registerPresenter = function(presenter) {
-            var name = presenter.name;
-            if (!name) {
-                throw "Presenter must have 'name' argument!";
-            }
-
-            this._presenters[name] = presenter;
-            return presenter;
-        };
 
         /**
          * Core function that trigger root component update. We rely on "reactiveness" of react, so just trigger
@@ -385,13 +349,6 @@
             }
         }
 
-        // handle register of presenter
-        if (_Core) {
-            _Core._registerPresenter(this);
-        } else {
-            _tmp_presenters.push(this);
-        }
-
         // bind presenters events
         if (this.events) {
             for (var eventName in this.events) {
@@ -411,11 +368,6 @@
      */
     Handykit.start = function(rootComponent, rootElement ) {
         _Core = new Core(rootComponent, rootElement);
-
-        for (var i=0; i < _tmp_presenters.length; i++) {
-            _Core._registerPresenter(_tmp_presenters[i]);
-        }
-        _tmp_presenters = []; // handy way to clean array
         _Core.updateUI();
     };
 

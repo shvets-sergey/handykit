@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 // it is important to define react over here even if you don't use
 // it since JSX transformer will transform your jsx to React.DOM views.
-define(['react', 'handykit'], function(React, Handykit) {
+define(['react', 'handykit', 'presenters/todo-presenter'], function(React, Handykit, todoPresenter) {
     var ENTER_KEY = 13;
     var ESC_KEY = 27;
 
@@ -9,7 +9,7 @@ define(['react', 'handykit'], function(React, Handykit) {
         render: function() {
             return (
                 <div>
-                    <TodoApp presenterName='TodoPresenter' />
+                    <TodoApp presenter={todoPresenter} />
                     <footer className="info">
                         <p>Double-click to edit a todo</p>
                         <p>Originally written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
