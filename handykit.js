@@ -267,7 +267,6 @@
      *      DOM.el where it must be render. Either string id of element or element itself (e.g. document.body)
      */
     var Core = function(rootComponent, rootEl) {
-        this._presenters = {};
         this._eventBus = _eventBus;
         this._rootComponent = rootComponent;
         this._rootEl = rootEl;
